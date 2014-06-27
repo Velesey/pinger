@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createTrayIcon();
     setIconNeutral();
     ui->spinBox->setValue(5);
+    ui->checkBox->setChecked(true);
 }
 
 void MainWindow::createActions()
@@ -128,7 +129,7 @@ void MainWindow::timer_overflow()
 
 void  MainWindow ::closeEvent(QCloseEvent *event)
 {
-    if (trayIcon->isVisible()) {
+    if ( ui->checkBox->isChecked()) {
         // QMessageBox::information(this, tr("Systray"),
         //                          tr("The program will keep running in the "
         //                             "system tray. To terminate the program, "
@@ -148,4 +149,6 @@ void MainWindow::thread_run(){
 MainWindow::~MainWindow()
 {
     delete ui;
+    timer->stop();
+    thread->exit();
 }
