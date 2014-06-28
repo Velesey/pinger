@@ -16,8 +16,11 @@ Now you can compile by running:
 You can open project in Qt Creator and compiling in it or in *nix systems you can compiling like this:
 
 $ mkdir build
+
 $ cd build
+
 $ qmake ../pinger.pro
+
 $ make
 
 Installing 
