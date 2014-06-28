@@ -28,4 +28,5 @@ Installing
 In Windows should copy Qt dll in the folder with programm (QtGuid4.dll, QtCore4.dll,QtCored4.dll) 
 
 In *nix you can use make install (Dont't use make install! http://habrahabr.ru/post/130868) or checkinstall
+
 $checkinstall 
