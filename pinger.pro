@@ -21,3 +21,7 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     systray.qrc
+
+
+target.path = $${PREFIX}/bin
+INSTALLS += target
