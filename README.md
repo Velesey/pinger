@@ -1,6 +1,6 @@
 About pinger
 ======
-Very simple program to ping one host and status in the system tray.
+Very simple multipalatform program to ping one host and status in the system tray.
 
 Compiling
 ======
