@@ -20,8 +20,10 @@ HEADERS  += mainwindow.h
 FORMS    += mainwindow.ui
 
 RESOURCES += \
-    systray.qrc
+    pinger.qrc
 
 
 target.path = $${PREFIX}/bin
 INSTALLS += target
+
+QMAKE_CXXFLAGS += -std=c++11

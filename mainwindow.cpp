@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createTrayIcon();
     setIconNeutral();
-    ui->spinBox->setValue(5);
+    ui->spinBox->setValue(1);
+    ui->spinBox_cnt->setValue(3);
     ui->checkBox->setChecked(true);
 }
 
@@ -82,6 +83,7 @@ void MainWindow::bt_go_click(){
     thread->start();
     ui->lineEdit->setReadOnly(true);
     ui->spinBox->setReadOnly(true);
+    ui->spinBox_cnt->setReadOnly(true);
 }
 
 void MainWindow::bt_stop_click(){
@@ -90,17 +92,21 @@ void MainWindow::bt_stop_click(){
     setIconNeutral();
     ui->lineEdit->setReadOnly(false);
     ui->spinBox->setReadOnly(false);
+    ui->spinBox_cnt->setReadOnly(false);
 }
 
 void MainWindow::doPing(QString host){
     string s;
+    int cnt = ui->spinBox_cnt->value();
 #ifdef __linux__
-    s = "ping " + host.toStdString() + " -c 1" + " 1>tmp.txt 2>&1 ";
+    s = "ping " + host.toStdString() + " -c " + to_string(cnt)+ " 1>tmp.txt 2>&1 ";
     system(s.c_str());
 #elif _WIN32
-    s = "cmd /c ping " + host.toStdString() + " -n 1" + " 1>tmp.txt 2>&1 ";
+    s = "cmd /c ping " + host.toStdString() + " -n "  + to_string(cnt) + " 1>tmp.txt 2>&1 ", cnt;
     WinExec(s.c_str(), SW_HIDE);
 #endif
+
+    std::cout << s;
 
     s="";
     string str;
