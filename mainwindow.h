@@ -10,6 +10,9 @@
 #include <fstream>
 #include <QTimer>
 #include <QThread>
+#include <QSettings>
+#include <qmessagebox.h>
+
 #if _WIN32
     #include <Windows.h>
 #endif
@@ -35,11 +38,14 @@ private slots:
     void bt_stop_click();
     void timer_overflow();
     void thread_run();
+    void loadSettings();
+    void saveSettings();
 
 private:
     void createActions();
     void createTrayIcon();
     void doPing(QString host);
+
 
     QAction *minimizeAction;
     QAction *maximizeAction;
@@ -51,6 +57,7 @@ private:
     QMenu *trayIconMenu;
     QTimer *timer;
     QThread *thread;
+    QString  fileName;
 };
 
 #endif // MAINWINDOW_H

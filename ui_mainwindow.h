@@ -18,6 +18,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QMainWindow>
+#include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QSpinBox>
@@ -31,6 +32,10 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *actionSave_settings;
+    QAction *actionLoad_settings;
+    QAction *actionQuit;
+    QAction *actionLoad_settings_at_startup;
     QWidget *centralWidget;
     QPushButton *bt_go;
     QLabel *label;
@@ -42,7 +47,21 @@ public:
     QCheckBox *checkBox;
     QSpinBox *spinBox_cnt;
     QLabel *label_3;
+    QSpinBox *spinBox_cntFails;
+    QCheckBox *checkBox_isManipulateVpn;
+    QLabel *label_4;
+    QLineEdit *lineEdit_vpnName;
+    QLineEdit *lineEdit_vpnUser;
+    QLineEdit *lineEdit_vpnPass;
+    QLabel *label_5;
+    QLabel *label_6;
+    QLabel *label_7;
+    QPushButton *pushButton_connect;
+    QPushButton *pushButton_disconnect;
+    QLabel *label_8;
     QMenuBar *menuBar;
+    QMenu *menuConfig;
+    QMenu *menuPinger;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -50,12 +69,24 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(513, 274);
+        MainWindow->resize(528, 450);
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/images/neutral.png"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindow->setWindowIcon(icon);
+        actionSave_settings = new QAction(MainWindow);
+        actionSave_settings->setObjectName(QString::fromUtf8("actionSave_settings"));
+        actionLoad_settings = new QAction(MainWindow);
+        actionLoad_settings->setObjectName(QString::fromUtf8("actionLoad_settings"));
+        actionQuit = new QAction(MainWindow);
+        actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
+        actionLoad_settings_at_startup = new QAction(MainWindow);
+        actionLoad_settings_at_startup->setObjectName(QString::fromUtf8("actionLoad_settings_at_startup"));
+        actionLoad_settings_at_startup->setCheckable(true);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         bt_go = new QPushButton(centralWidget);
         bt_go->setObjectName(QString::fromUtf8("bt_go"));
-        bt_go->setGeometry(QRect(420, 40, 89, 41));
+        bt_go->setGeometry(QRect(410, 0, 89, 41));
         label = new QLabel(centralWidget);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(260, 30, 141, 16));
@@ -71,10 +102,10 @@ public:
         spinBox->setReadOnly(false);
         label_2 = new QLabel(centralWidget);
         label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setGeometry(QRect(150, 60, 141, 16));
+        label_2->setGeometry(QRect(160, 60, 141, 16));
         bt_stop = new QPushButton(centralWidget);
         bt_stop->setObjectName(QString::fromUtf8("bt_stop"));
-        bt_stop->setGeometry(QRect(420, 0, 89, 27));
+        bt_stop->setGeometry(QRect(410, 50, 89, 27));
         checkBox = new QCheckBox(centralWidget);
         checkBox->setObjectName(QString::fromUtf8("checkBox"));
         checkBox->setGeometry(QRect(260, 0, 121, 20));
@@ -83,11 +114,55 @@ public:
         spinBox_cnt->setGeometry(QRect(20, 0, 51, 23));
         label_3 = new QLabel(centralWidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(80, 10, 151, 16));
+        label_3->setGeometry(QRect(80, 10, 161, 16));
+        spinBox_cntFails = new QSpinBox(centralWidget);
+        spinBox_cntFails->setObjectName(QString::fromUtf8("spinBox_cntFails"));
+        spinBox_cntFails->setGeometry(QRect(20, 230, 41, 23));
+        checkBox_isManipulateVpn = new QCheckBox(centralWidget);
+        checkBox_isManipulateVpn->setObjectName(QString::fromUtf8("checkBox_isManipulateVpn"));
+        checkBox_isManipulateVpn->setGeometry(QRect(20, 210, 171, 20));
+        label_4 = new QLabel(centralWidget);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+        label_4->setGeometry(QRect(70, 240, 131, 16));
+        lineEdit_vpnName = new QLineEdit(centralWidget);
+        lineEdit_vpnName->setObjectName(QString::fromUtf8("lineEdit_vpnName"));
+        lineEdit_vpnName->setGeometry(QRect(20, 260, 171, 23));
+        lineEdit_vpnUser = new QLineEdit(centralWidget);
+        lineEdit_vpnUser->setObjectName(QString::fromUtf8("lineEdit_vpnUser"));
+        lineEdit_vpnUser->setGeometry(QRect(20, 290, 171, 23));
+        lineEdit_vpnPass = new QLineEdit(centralWidget);
+        lineEdit_vpnPass->setObjectName(QString::fromUtf8("lineEdit_vpnPass"));
+        lineEdit_vpnPass->setGeometry(QRect(20, 320, 171, 23));
+        label_5 = new QLabel(centralWidget);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+        label_5->setGeometry(QRect(200, 260, 131, 16));
+        label_6 = new QLabel(centralWidget);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+        label_6->setGeometry(QRect(200, 290, 131, 16));
+        label_7 = new QLabel(centralWidget);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+        label_7->setGeometry(QRect(200, 320, 131, 16));
+        pushButton_connect = new QPushButton(centralWidget);
+        pushButton_connect->setObjectName(QString::fromUtf8("pushButton_connect"));
+        pushButton_connect->setGeometry(QRect(400, 220, 89, 41));
+        pushButton_disconnect = new QPushButton(centralWidget);
+        pushButton_disconnect->setObjectName(QString::fromUtf8("pushButton_disconnect"));
+        pushButton_disconnect->setGeometry(QRect(400, 270, 89, 41));
+        label_8 = new QLabel(centralWidget);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+        label_8->setGeometry(QRect(420, 330, 51, 16));
+        QFont font;
+        font.setBold(true);
+        font.setWeight(75);
+        label_8->setFont(font);
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 513, 25));
+        menuBar->setGeometry(QRect(0, 0, 528, 25));
+        menuConfig = new QMenu(menuBar);
+        menuConfig->setObjectName(QString::fromUtf8("menuConfig"));
+        menuPinger = new QMenu(menuBar);
+        menuPinger->setObjectName(QString::fromUtf8("menuPinger"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
@@ -95,6 +170,13 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
+
+        menuBar->addAction(menuPinger->menuAction());
+        menuBar->addAction(menuConfig->menuAction());
+        menuConfig->addAction(actionSave_settings);
+        menuConfig->addAction(actionLoad_settings);
+        menuConfig->addSeparator();
+        menuPinger->addAction(actionQuit);
 
         retranslateUi(MainWindow);
 
@@ -104,12 +186,26 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Pinger", 0, QApplication::UnicodeUTF8));
+        actionSave_settings->setText(QApplication::translate("MainWindow", "Save settings", 0, QApplication::UnicodeUTF8));
+        actionLoad_settings->setText(QApplication::translate("MainWindow", "Load settings", 0, QApplication::UnicodeUTF8));
+        actionQuit->setText(QApplication::translate("MainWindow", "Quit", 0, QApplication::UnicodeUTF8));
+        actionLoad_settings_at_startup->setText(QApplication::translate("MainWindow", "load settings at startup", 0, QApplication::UnicodeUTF8));
         bt_go->setText(QApplication::translate("MainWindow", "Go", 0, QApplication::UnicodeUTF8));
         label->setText(QApplication::translate("MainWindow", "Server IP or Name", 0, QApplication::UnicodeUTF8));
         label_2->setText(QApplication::translate("MainWindow", "Delay (sec)", 0, QApplication::UnicodeUTF8));
         bt_stop->setText(QApplication::translate("MainWindow", "Stop", 0, QApplication::UnicodeUTF8));
         checkBox->setText(QApplication::translate("MainWindow", "Hide, not close", 0, QApplication::UnicodeUTF8));
-        label_3->setText(QApplication::translate("MainWindow", "Count pings at a time", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("MainWindow", "Count of pings at a time", 0, QApplication::UnicodeUTF8));
+        checkBox_isManipulateVpn->setText(QApplication::translate("MainWindow", "Auto reconnect to VPN", 0, QApplication::UnicodeUTF8));
+        label_4->setText(QApplication::translate("MainWindow", "Count of fails times", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("MainWindow", "VPN name", 0, QApplication::UnicodeUTF8));
+        label_6->setText(QApplication::translate("MainWindow", "VPN user name", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("MainWindow", "VPN user password", 0, QApplication::UnicodeUTF8));
+        pushButton_connect->setText(QApplication::translate("MainWindow", "Connect", 0, QApplication::UnicodeUTF8));
+        pushButton_disconnect->setText(QApplication::translate("MainWindow", "Disconnect", 0, QApplication::UnicodeUTF8));
+        label_8->setText(QApplication::translate("MainWindow", "Status", 0, QApplication::UnicodeUTF8));
+        menuConfig->setTitle(QApplication::translate("MainWindow", "Settings", 0, QApplication::UnicodeUTF8));
+        menuPinger->setTitle(QApplication::translate("MainWindow", "Pinger", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

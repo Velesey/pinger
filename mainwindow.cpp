@@ -14,9 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createTrayIcon();
     setIconNeutral();
-    ui->spinBox->setValue(1);
-    ui->spinBox_cnt->setValue(3);
-    ui->checkBox->setChecked(true);
+    fileName = QApplication::applicationDirPath() + "/settings.ini";
 }
 
 void MainWindow::createActions()
@@ -40,6 +38,12 @@ void MainWindow::createActions()
     connect(timer,SIGNAL(timeout()), this, SLOT(timer_overflow()));
 
     connect(thread,SIGNAL(started()),this,SLOT(thread_run()));
+
+    connect(ui->actionQuit,SIGNAL(triggered()), qApp, SLOT(quit()));
+
+    connect(ui->actionSave_settings,SIGNAL(triggered()), this,  SLOT(saveSettings()));
+
+    connect(ui->actionLoad_settings,SIGNAL(triggered()), this,  SLOT(loadSettings()));
 }
 
 void MainWindow::createTrayIcon()
@@ -61,7 +65,7 @@ void MainWindow::setIconBad()
     QIcon icon = QIcon(":/images/bad.png");
     setWindowIcon(icon);
     trayIcon->setIcon(icon);
-    trayIcon->setToolTip("Ping failed");
+    trayIcon->setToolTip("Status: Ping failed");
 }
 
 void MainWindow::setIconGood()
@@ -69,7 +73,7 @@ void MainWindow::setIconGood()
     QIcon icon = QIcon(":/images/good.png");
     setWindowIcon(icon);
     trayIcon->setIcon(icon);
-    trayIcon->setToolTip("Pinged");
+    trayIcon->setToolTip("Status: Pinged");
 }
 
 void MainWindow::setIconNeutral()
@@ -77,22 +81,31 @@ void MainWindow::setIconNeutral()
     QIcon icon = QIcon(":/images/neutral.png");
     setWindowIcon(icon);
     trayIcon->setIcon(icon);
-    trayIcon->setToolTip("Unknown");
+    trayIcon->setToolTip("Status: stopped");
 }
 void MainWindow::bt_go_click(){
+    if (ui->spinBox_cnt->value() == 0)
+        ui->spinBox_cnt->setValue(1);
+    if(ui->lineEdit->text().length() == 0)
+        ui->lineEdit->setText("localhost");
+
     thread->start();
-    ui->lineEdit->setReadOnly(true);
-    ui->spinBox->setReadOnly(true);
-    ui->spinBox_cnt->setReadOnly(true);
+    ui->lineEdit->setEnabled(false);
+    ui->spinBox->setEnabled(false);
+    ui->spinBox_cnt->setEnabled(false);
+    ui->bt_go->setEnabled(false);
+
 }
 
 void MainWindow::bt_stop_click(){
     timer->stop();
     thread->exit();
     setIconNeutral();
-    ui->lineEdit->setReadOnly(false);
-    ui->spinBox->setReadOnly(false);
-    ui->spinBox_cnt->setReadOnly(false);
+
+    ui->lineEdit->setEnabled(true);
+    ui->spinBox->setEnabled(true);
+    ui->spinBox_cnt->setEnabled(true);
+    ui->bt_go->setEnabled(true);
 }
 
 void MainWindow::doPing(QString host){
@@ -105,8 +118,6 @@ void MainWindow::doPing(QString host){
     s = "cmd /c ping " + host.toStdString() + " -n "  + to_string(cnt) + " 1>tmp.txt 2>&1 ", cnt;
     WinExec(s.c_str(), SW_HIDE);
 #endif
-
-    std::cout << s;
 
     s="";
     string str;
@@ -136,11 +147,11 @@ void MainWindow::timer_overflow()
 void  MainWindow ::closeEvent(QCloseEvent *event)
 {
     if ( ui->checkBox->isChecked()) {
-        // QMessageBox::information(this, tr("Systray"),
-        //                          tr("The program will keep running in the "
-        //                             "system tray. To terminate the program, "
-        //                             "choose <b>Quit</b> in the context menu "
-        //                             "of the system tray entry."));
+         trayIcon->showMessage(tr("Systray"),
+                               tr("The program will keep running in the "
+                                  "system tray. To terminate the program, "
+                                  "choose Quit in the context menu "
+                                  "of the system tray entry."));
         hide();
         event->ignore();
 
@@ -150,6 +161,42 @@ void  MainWindow ::closeEvent(QCloseEvent *event)
 void MainWindow::thread_run(){
     timer->start(ui->spinBox->value()* 1000);
     //exec();
+}
+
+void MainWindow::saveSettings(){
+    QSettings settings(fileName, QSettings::IniFormat);
+
+    settings.setValue("is_hide_not_close", ui->checkBox->isChecked());
+    settings.setValue("count_pings_at_time", ui->spinBox_cnt->value());
+    settings.setValue("delay", ui->spinBox->value());
+    settings.setValue("server_name",ui->lineEdit->text());
+
+    settings.setValue("auto_connect_vpn", ui->checkBox_isManipulateVpn->isChecked());
+    settings.setValue("count_pings_vpn", ui->spinBox_cntFails->value());
+    settings.setValue("vpn_name", ui->lineEdit_vpnName->text());
+    settings.setValue("vpn_username", ui->lineEdit_vpnUser->text());
+    settings.setValue("vpn_userpass", ui->lineEdit_vpnPass->text());
+
+    trayIcon->showMessage(tr("Settings"), tr("Saved"));
+
+}
+
+void MainWindow::loadSettings(){
+    QSettings settings(fileName, QSettings::IniFormat);
+
+     ui->checkBox->setChecked(settings.value("is_hide_not_close", true).toBool());
+     ui->spinBox_cnt->setValue(settings.value("count_pings_at_time",1).toInt());
+     ui->spinBox->setValue(settings.value("delay",1).toInt());
+     ui->lineEdit->setText(settings.value("server_name", "localhost").toString());
+
+     ui->checkBox_isManipulateVpn->setChecked(settings.value("auto_connect_vpn").toBool());
+     ui->spinBox_cntFails->setValue(settings.value("count_pings_vpn",1).toInt());
+     ui->lineEdit_vpnName->setText(settings.value("vpn_name").toString());
+     ui->lineEdit_vpnUser->setText(settings.value("vpn_username").toString());
+     ui->lineEdit_vpnPass->setText(settings.value("vpn_userpass").toString());
+
+     trayIcon->showMessage(tr("Settings"), tr("Loaded"));
+
 }
 
 MainWindow::~MainWindow()
