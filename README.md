@@ -1,6 +1,6 @@
 About pinger
 ======
-Very simple multipalatform program to ping one host and status in the system tray.
+Simple cross-platform program to ping one host and status in the system tray. Сan also reconnect to VPN.
 
 Compiling
 ======
@@ -29,4 +29,4 @@ In Windows should copy Qt dll in the folder with programm (QtGuid4.dll, QtCore4.
 
 In *nix you can use make install (Dont't use make install! http://habrahabr.ru/post/130868) or checkinstall
 
-$checkinstall 
+$ checkinstall 
