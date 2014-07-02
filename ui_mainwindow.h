@@ -59,6 +59,7 @@ public:
     QPushButton *bt_connect;
     QPushButton *bt_disconnect;
     QLabel *label_8;
+    QTextBrowser *textBrowser_vpn;
     QMenuBar *menuBar;
     QMenu *menuConfig;
     QMenu *menuPinger;
@@ -69,7 +70,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(528, 450);
+        MainWindow->resize(527, 511);
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/images/neutral.png"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindow->setWindowIcon(icon);
@@ -144,7 +145,7 @@ public:
         label_7->setGeometry(QRect(200, 320, 131, 16));
         bt_connect = new QPushButton(centralWidget);
         bt_connect->setObjectName(QString::fromUtf8("bt_connect"));
-        bt_connect->setGeometry(QRect(400, 220, 89, 41));
+        bt_connect->setGeometry(QRect(400, 210, 89, 41));
         bt_disconnect = new QPushButton(centralWidget);
         bt_disconnect->setObjectName(QString::fromUtf8("bt_disconnect"));
         bt_disconnect->setGeometry(QRect(400, 270, 89, 41));
@@ -155,10 +156,13 @@ public:
         font.setBold(true);
         font.setWeight(75);
         label_8->setFont(font);
+        textBrowser_vpn = new QTextBrowser(centralWidget);
+        textBrowser_vpn->setObjectName(QString::fromUtf8("textBrowser_vpn"));
+        textBrowser_vpn->setGeometry(QRect(20, 350, 481, 81));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 528, 25));
+        menuBar->setGeometry(QRect(0, 0, 527, 25));
         menuConfig = new QMenu(menuBar);
         menuConfig->setObjectName(QString::fromUtf8("menuConfig"));
         menuPinger = new QMenu(menuBar);
