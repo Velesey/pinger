@@ -46,8 +46,7 @@ private slots:
 private:
     void createActions();
     void createTrayIcon();
-    void doPing(QString host);
-
+    bool doPing(QString host);
 
     QAction *minimizeAction;
     QAction *maximizeAction;
@@ -60,6 +59,7 @@ private:
     QTimer *timer;
     QThread *thread;
     QString  fileName;
+    int cntFailsPings;
 };
 
 #endif // MAINWINDOW_H

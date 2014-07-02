@@ -151,7 +151,7 @@ public:
         bt_disconnect->setGeometry(QRect(400, 270, 89, 41));
         label_8 = new QLabel(centralWidget);
         label_8->setObjectName(QString::fromUtf8("label_8"));
-        label_8->setGeometry(QRect(420, 330, 51, 16));
+        label_8->setGeometry(QRect(420, 330, 80, 16));
         QFont font;
         font.setBold(true);
         font.setWeight(75);
