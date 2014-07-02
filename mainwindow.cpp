@@ -44,6 +44,11 @@ void MainWindow::createActions()
     connect(ui->actionSave_settings,SIGNAL(triggered()), this,  SLOT(saveSettings()));
 
     connect(ui->actionLoad_settings,SIGNAL(triggered()), this,  SLOT(loadSettings()));
+
+    connect(ui->bt_connect,SIGNAL(clicked()), this, SLOT(bt_connect_click()));
+
+    connect(ui->bt_disconnect,SIGNAL(clicked()), this, SLOT(bt_disconnect_click()));
+
 }
 
 void MainWindow::createTrayIcon()
@@ -196,6 +201,15 @@ void MainWindow::loadSettings(){
      ui->lineEdit_vpnPass->setText(settings.value("vpn_userpass").toString());
 
      trayIcon->showMessage(tr("Settings"), tr("Loaded"));
+
+}
+
+
+void MainWindow::bt_connect_click(){
+
+}
+
+void MainWindow::bt_disconnect_click(){
 
 }
 

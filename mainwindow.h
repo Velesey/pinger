@@ -40,6 +40,8 @@ private slots:
     void thread_run();
     void loadSettings();
     void saveSettings();
+    void bt_connect_click();
+    void bt_disconnect_click();
 
 private:
     void createActions();
