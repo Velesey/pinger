@@ -131,7 +131,8 @@ bool MainWindow::doPing(QString host){
     res+= processPing->readAllStandardError();
 
     ui->textBrowser->setText(res);
-    if (res.toStdString().find("ttl")!=string::npos || s.find("TTL")!=string::npos){
+    if (res.toStdString().find("ttl")!=string::npos || res.toStdString().find("TTL")!=string::npos
+            ||res.toStdString().find("Lost = 0")!=string::npos ){
         setIconGood();
         return true;
     }
