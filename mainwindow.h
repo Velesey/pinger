@@ -12,10 +12,8 @@
 #include <QThread>
 #include <QSettings>
 #include <qmessagebox.h>
+#include <QProcess>
 
-#if _WIN32
-    #include <Windows.h>
-#endif
 namespace Ui {
 class MainWindow;
 }
@@ -60,6 +58,8 @@ private:
     QThread *thread;
     QString  fileName;
     int cntFailsPings;
+    QProcess *processVpn;
+    QProcess *processPing;
 };
 
 #endif // MAINWINDOW_H

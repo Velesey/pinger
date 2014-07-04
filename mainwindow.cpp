@@ -118,24 +118,20 @@ bool MainWindow::doPing(QString host){
     string s;
     int cnt = ui->spinBox_cnt->value();
 #ifdef __linux__
-    s = "ping " + host.toStdString() + " -c " + to_string(cnt)+ " 1>tmp.txt 2>&1 ";
-    system(s.c_str());
-#elif _WIN32
-    s = "cmd /c ping " + host.toStdString() + " -n "  + to_string((long double)cnt) + " 1>tmp.txt 2>&1 ", cnt;
-    WinExec(s.c_str(), SW_HIDE);
-#endif
+    s = "ping " + host.toStdString() + " -c " + to_string(cnt);
 
-    s="";
-    string str;
-    ifstream infile;
-    infile.open ("tmp.txt");
-    while (std::getline(infile, str))
-    {
-        s+=str;
-    }
-    infile.close();
-    ui->textBrowser->setText(tr(s.c_str()));
-    if (s.find("ttl")!=string::npos || s.find("TTL")!=string::npos){
+#elif _WIN32
+    s = "ping " + host.toStdString() + " -n "  + to_string((long double)cnt), cnt;
+
+#endif
+    processPing =new QProcess(thread);
+    processPing->start(tr(s.c_str()));
+    processPing->waitForFinished();
+    QString res =  processPing->readAllStandardOutput();
+    res+= processPing->readAllStandardError();
+
+    ui->textBrowser->setText(res);
+    if (res.toStdString().find("ttl")!=string::npos || s.find("TTL")!=string::npos){
         setIconGood();
         return true;
     }
@@ -233,22 +229,18 @@ void MainWindow::bt_connect_click(){
 #elif _WIN32
     s = "cmd /c rasdial \"" + ui->lineEdit_vpnName->text().toStdString() + "\" " +
             ui->lineEdit_vpnUser->text().toStdString() + " " +
-            ui->lineEdit_vpnPass->text().toStdString() + " 1>tmpvpn.txt 2>&1 ";
-    WinExec(s.c_str(), SW_HIDE);
+            ui->lineEdit_vpnPass->text().toStdString() + " ";
 #endif
+    processVpn =new QProcess(this);
+    processVpn->start(tr(s.c_str()));
+    processVpn->waitForFinished();
+    QString res =  processVpn->readAllStandardOutput();
+    res+= processVpn->readAllStandardError();
 
-    s="";
-    string str;
-    ifstream infile;
-    infile.open ("tmpvpn.txt");
-    while (std::getline(infile, str))
-    {
-        s+=str;
-    }
-    infile.close();
-    ui->textBrowser_vpn->setText(tr(s.c_str()));
+    ui->textBrowser_vpn->setText(res);
 
-    if (s.find("Successfully connected to vpn connection")!=string::npos){
+    if (res.toStdString().find("Successfully connected to vpn connection")!=string::npos
+            || res.toStdString().find("already connected")!=string::npos){
         ui->label_8->setText("Connected");
         ui->label_8->setStyleSheet("QLabel { color : green; }");
 
@@ -272,21 +264,15 @@ void MainWindow::bt_disconnect_click(){
 #ifdef __linux__
     // :(
 #elif _WIN32
-    s = "cmd /c rasdial \"" + ui->lineEdit_vpnName->text().toStdString() + "\" /disconnect" +
-            + " 1>tmpvpn.txt 2>&1 ";
-    WinExec(s.c_str(), SW_HIDE);
-#endif
+    s = "cmd /c rasdial \"" + ui->lineEdit_vpnName->text().toStdString() + "\" /disconnect";
+   #endif
 
-    s="";
-    string str;
-    ifstream infile;
-    infile.open ("tmpvpn.txt");
-    while (std::getline(infile, str))
-    {
-        s+=str;
-    }
-    infile.close();
-    ui->textBrowser_vpn->setText(tr(s.c_str()));
+    processVpn =new QProcess(this);
+    processVpn->start(tr(s.c_str()));
+    processVpn->waitForFinished();
+    QString res =  processVpn->readAllStandardOutput();
+             res+= processVpn->readAllStandardError();
+    ui->textBrowser_vpn->setText(res);
 
     ui->label_8->setText("Disconnected");
     ui->label_8->setStyleSheet("QLabel { color : red; }");
