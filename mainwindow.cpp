@@ -4,13 +4,15 @@
 
 using namespace std;
 
+QString resultPing = "";
+bool isTheadNotWork = true;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     timer = new QTimer;
-    thread = new QThread;
     createActions();
     createTrayIcon();
     setIconNeutral();
@@ -37,8 +39,6 @@ void MainWindow::createActions()
     connect(ui->bt_stop, SIGNAL(clicked()), this, SLOT(bt_stop_click()));
 
     connect(timer,SIGNAL(timeout()), this, SLOT(timer_overflow()));
-
-    connect(thread,SIGNAL(started()),this,SLOT(thread_run()));
 
     connect(ui->actionQuit,SIGNAL(triggered()), qApp, SLOT(quit()));
 
@@ -90,12 +90,10 @@ void MainWindow::setIconNeutral()
     trayIcon->setToolTip("Status: stopped");
 }
 void MainWindow::bt_go_click(){
-    if (ui->spinBox_cnt->value() == 0)
-        ui->spinBox_cnt->setValue(1);
     if(ui->lineEdit->text().length() == 0)
         ui->lineEdit->setText("localhost");
 
-    thread->start();
+    timer->start(ui->spinBox->value()* 1000);
     ui->lineEdit->setEnabled(false);
     ui->spinBox->setEnabled(false);
     ui->spinBox_cnt->setEnabled(false);
@@ -105,7 +103,6 @@ void MainWindow::bt_go_click(){
 
 void MainWindow::bt_stop_click(){
     timer->stop();
-    thread->exit();
     setIconNeutral();
 
     ui->lineEdit->setEnabled(true);
@@ -114,9 +111,9 @@ void MainWindow::bt_stop_click(){
     ui->bt_go->setEnabled(true);
 }
 
-bool MainWindow::doPing(QString host){
+QString MainWindow::doPing(QString host, int cnt){
     string s;
-    int cnt = ui->spinBox_cnt->value();
+
 #ifdef __linux__
     s = "ping " + host.toStdString() + " -c " + to_string(cnt);
 
@@ -124,61 +121,61 @@ bool MainWindow::doPing(QString host){
     s = "ping " + host.toStdString() + " -n "  + to_string((long double)cnt), cnt;
 
 #endif
-    processPing =new QProcess(thread);
+    isTheadNotWork = false;
+    processPing =new QProcess();
     processPing->start(tr(s.c_str()));
     processPing->waitForFinished();
     QString res =  processPing->readAllStandardOutput();
     res+= processPing->readAllStandardError();
+    resultPing = res;
+    isTheadNotWork = true;
+    return res;
 
-    ui->textBrowser->setText(res);
-    if (res.toStdString().find("ttl")!=string::npos || res.toStdString().find("TTL")!=string::npos
-            ||res.toStdString().find("Lost = 0")!=string::npos ){
-        setIconGood();
-        return true;
-    }
-    else{
-        setIconBad();
-        return false;
-    }
 
 }
 
 void MainWindow::timer_overflow()
 {
+    if (isTheadNotWork){
+        QtConcurrent::run(this,&MainWindow::doPing,ui->lineEdit->text(),ui->spinBox_cnt->value());
+        ui->textBrowser->setText(resultPing);
+    }
 
-    if (doPing(ui->lineEdit->text()))
+    if (resultPing.toStdString().find("ttl")!=string::npos
+            || resultPing.toStdString().find("TTL")!=string::npos
+            || resultPing.toStdString().find("Lost = 0")!=string::npos )
     {
         cntFailsPings = 0;
+        setIconGood();
     }
     else {
         cntFailsPings++;
+        setIconBad();
     }
 
-    if (cntFailsPings == ui->spinBox_cntFails->value()){
+    if (cntFailsPings == ui->spinBox_cntFails->value() && ui->checkBox_isManipulateVpn->isChecked()){
         cntFailsPings = 0;
         bt_disconnect_click();
         bt_connect_click();
     }
+
+
 }
 
 void  MainWindow ::closeEvent(QCloseEvent *event)
 {
     if ( ui->checkBox->isChecked()) {
-         trayIcon->showMessage(tr("Systray"),
-                               tr("The program will keep running in the "
-                                  "system tray. To terminate the program, "
-                                  "choose Quit in the context menu "
-                                  "of the system tray entry."));
+        trayIcon->showMessage(tr("Systray"),
+                              tr("The program will keep running in the "
+                                 "system tray. To terminate the program, "
+                                 "choose Quit in the context menu "
+                                 "of the system tray entry."));
         hide();
         event->ignore();
 
     }
 }
 
-void MainWindow::thread_run(){
-    timer->start(ui->spinBox->value()* 1000);
-    //exec();
-}
 
 void MainWindow::saveSettings(){
     QSettings settings(fileName, QSettings::IniFormat);
@@ -201,18 +198,18 @@ void MainWindow::saveSettings(){
 void MainWindow::loadSettings(){
     QSettings settings(fileName, QSettings::IniFormat);
 
-     ui->checkBox->setChecked(settings.value("is_hide_not_close", true).toBool());
-     ui->spinBox_cnt->setValue(settings.value("count_pings_at_time",1).toInt());
-     ui->spinBox->setValue(settings.value("delay",1).toInt());
-     ui->lineEdit->setText(settings.value("server_name", "localhost").toString());
+    ui->checkBox->setChecked(settings.value("is_hide_not_close", true).toBool());
+    ui->spinBox_cnt->setValue(settings.value("count_pings_at_time",1).toInt());
+    ui->spinBox->setValue(settings.value("delay",1).toInt());
+    ui->lineEdit->setText(settings.value("server_name", "localhost").toString());
 
-     ui->checkBox_isManipulateVpn->setChecked(settings.value("auto_connect_vpn").toBool());
-     ui->spinBox_cntFails->setValue(settings.value("count_pings_vpn",1).toInt());
-     ui->lineEdit_vpnName->setText(settings.value("vpn_name").toString());
-     ui->lineEdit_vpnUser->setText(settings.value("vpn_username").toString());
-     ui->lineEdit_vpnPass->setText(settings.value("vpn_userpass").toString());
+    ui->checkBox_isManipulateVpn->setChecked(settings.value("auto_connect_vpn").toBool());
+    ui->spinBox_cntFails->setValue(settings.value("count_pings_vpn",1).toInt());
+    ui->lineEdit_vpnName->setText(settings.value("vpn_name").toString());
+    ui->lineEdit_vpnUser->setText(settings.value("vpn_username").toString());
+    ui->lineEdit_vpnPass->setText(settings.value("vpn_userpass").toString());
 
-     trayIcon->showMessage(tr("Settings"), tr("Loaded"));
+    trayIcon->showMessage(tr("Settings"), tr("Loaded"));
 
 }
 
@@ -266,13 +263,13 @@ void MainWindow::bt_disconnect_click(){
     // :(
 #elif _WIN32
     s = "cmd /c rasdial \"" + ui->lineEdit_vpnName->text().toStdString() + "\" /disconnect";
-   #endif
+#endif
 
     processVpn =new QProcess(this);
     processVpn->start(tr(s.c_str()));
     processVpn->waitForFinished();
     QString res =  processVpn->readAllStandardOutput();
-             res+= processVpn->readAllStandardError();
+    res+= processVpn->readAllStandardError();
     ui->textBrowser_vpn->setText(res);
 
     ui->label_8->setText("Disconnected");
@@ -286,5 +283,5 @@ MainWindow::~MainWindow()
 {
     delete ui;
     timer->stop();
-    thread->exit();
+
 }

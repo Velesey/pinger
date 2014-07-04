@@ -113,12 +113,14 @@ public:
         spinBox_cnt = new QSpinBox(centralWidget);
         spinBox_cnt->setObjectName(QString::fromUtf8("spinBox_cnt"));
         spinBox_cnt->setGeometry(QRect(20, 0, 51, 23));
+        spinBox_cnt->setMinimum(1);
         label_3 = new QLabel(centralWidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
         label_3->setGeometry(QRect(80, 10, 161, 16));
         spinBox_cntFails = new QSpinBox(centralWidget);
         spinBox_cntFails->setObjectName(QString::fromUtf8("spinBox_cntFails"));
         spinBox_cntFails->setGeometry(QRect(20, 230, 41, 23));
+        spinBox_cntFails->setMinimum(1);
         checkBox_isManipulateVpn = new QCheckBox(centralWidget);
         checkBox_isManipulateVpn->setObjectName(QString::fromUtf8("checkBox_isManipulateVpn"));
         checkBox_isManipulateVpn->setGeometry(QRect(20, 210, 171, 20));
@@ -151,7 +153,7 @@ public:
         bt_disconnect->setGeometry(QRect(400, 270, 89, 41));
         label_8 = new QLabel(centralWidget);
         label_8->setObjectName(QString::fromUtf8("label_8"));
-        label_8->setGeometry(QRect(420, 330, 80, 16));
+        label_8->setGeometry(QRect(390, 330, 111, 16));
         QFont font;
         font.setBold(true);
         font.setWeight(75);

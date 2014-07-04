@@ -7,12 +7,12 @@
 #include <string>
 #include <stdlib.h>
 #include <iostream>
-#include <fstream>
 #include <QTimer>
 #include <QThread>
 #include <QSettings>
 #include <qmessagebox.h>
 #include <QProcess>
+#include <QtConcurrentRun>
 
 namespace Ui {
 class MainWindow;
@@ -35,7 +35,6 @@ private slots:
     void bt_go_click();
     void bt_stop_click();
     void timer_overflow();
-    void thread_run();
     void loadSettings();
     void saveSettings();
     void bt_connect_click();
@@ -44,7 +43,7 @@ private slots:
 private:
     void createActions();
     void createTrayIcon();
-    bool doPing(QString host);
+    QString doPing(QString host, int cnt);
 
     QAction *minimizeAction;
     QAction *maximizeAction;
@@ -55,11 +54,11 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     QTimer *timer;
-    QThread *thread;
     QString  fileName;
     int cntFailsPings;
     QProcess *processVpn;
     QProcess *processPing;
+
 };
 
 #endif // MAINWINDOW_H
