@@ -143,7 +143,8 @@ void MainWindow::timer_overflow()
 
     if (resultPing.toStdString().find("ttl")!=string::npos
             || resultPing.toStdString().find("TTL")!=string::npos
-            || resultPing.toStdString().find("Lost = 0")!=string::npos )
+            || resultPing.toStdString().find("Minimum")!=string::npos  //  мало ли
+            || resultPing.toStdString().find("Минимиум")!=string::npos ) // лучше перебдеть, чем недобдеть
     {
         cntFailsPings = 0;
         setIconGood();
